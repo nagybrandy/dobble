@@ -1,0 +1,36 @@
+name: Compile and Generate PDF
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: sudo apt update && sudo apt install -y g++ make texlive-latex-base texlive-latex-extra
+
+      - name: Compile C++ Code
+        run: g++ -o dobble_generator dobble_generator.cpp
+
+      - name: Run C++ Program
+        run: ./dobble_generator  # This should generate 'output.tex'
+
+      - name: Convert LaTeX to PDF
+        run: pdflatex output.tex
+
+      - name: Move PDF to Public Folder
+        run: mkdir public && mv output.pdf public/
+
+      - name: Deploy PDF to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
