@@ -1,0 +1,10 @@
+selected_scheme scheme-small
+TEXDIR D:\a\dobble\dobble\third_party\texlive
+TEXMFCONFIG $TEXDIR\texmf-config
+TEXMFHOME $TEXDIR\texmf-home
+TEXMFLOCAL $TEXDIR\texmf-local
+TEXMFSYSCONFIG $TEXDIR\texmf-config
+TEXMFSYSVAR $TEXDIR\texmf-var
+TEXMFVAR $TEXDIR\texmf-var
+option_doc 0
+option_src 0
