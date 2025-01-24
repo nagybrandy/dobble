@@ -1,0 +1,29 @@
+name: Setup and Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Chocolatey
+        run: |
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+          Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+      - name: Install MinGW, Make, and TeX Live
+        run: |
+          choco install mingw make texlive -y
+
+      - name: Verify Installations
+        run: |
+          g++ --version
+          make --version
+          pdflatex --version
+
+      - name: Build Project
+        run: g++ -o my_program main.cpp
