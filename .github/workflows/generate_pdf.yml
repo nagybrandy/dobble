@@ -11,19 +11,18 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Cache Dependencies
+      - name: Cache APT Packages
         uses: actions/cache@v3
         with:
-          path: |
-            ~/.cache/apt
-            ~/.npm
-          key: ${{ runner.os }}-dependencies-${{ hashFiles('**/package-lock.json') }}
+          path: /var/cache/apt/archives
+          key: apt-${{ runner.os }}-${{ hashFiles('.github/workflows/generate_pdf.yml') }}
           restore-keys: |
-            ${{ runner.os }}-dependencies-
+            apt-${{ runner.os }}-
 
       - name: Install Dependencies (Only If Needed)
         run: |
-          sudo apt update && sudo apt install -y g++ make texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
+          sudo apt update
+          sudo apt install -y --no-install-recommends g++ make texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
 
       - name: Compile C++ Code
         run: g++ -o dobble_generator bisik.cpp cards.cpp projektiv.cpp write.cpp -std=c++17
