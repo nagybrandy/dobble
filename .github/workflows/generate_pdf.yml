@@ -1,7 +1,7 @@
 name: Generate Dobble PDF
 
 on:
-  workflow_dispatch:  # This allows manual trigger from the website
+  workflow_dispatch:
 
 jobs:
   generate:
@@ -11,21 +11,27 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Install Dependencies
+      - name: Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/apt
+            ~/.npm
+          key: ${{ runner.os }}-dependencies-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-dependencies-
+
+      - name: Install Dependencies (Only If Needed)
         run: |
-          sudo apt update
-          sudo apt install -y g++ make texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra nodejs npm
+          sudo apt update && sudo apt install -y g++ make texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra nodejs npm
+          npm install
 
       - name: Compile C++ Code
         run: g++ -o dobble_generator bisik.cpp cards.cpp projektiv.cpp write.cpp -std=c++17
 
       - name: Run C++ Program and Generate PDF
         run: |
-          echo "1" > config.txt  # Example input (modify as needed)
-          echo "11" >> config.txt
-          echo "0" >> config.txt
-          echo "0" >> config.txt
-          ./dobble_generator < config.txt
+          ./dobble_generator
           pdflatex main.tex
           mv main.pdf dobble_cards.pdf
 
@@ -34,10 +40,3 @@ jobs:
         with:
           name: dobble_cards
           path: dobble_cards.pdf
-
-      - name: Trigger Workflow
-        run: |
-          curl -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_PAT }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/nagybrandy/dobble/actions/workflows/generate_pdf.yml/dispatches \
-          -d '{"ref":"main"}'
