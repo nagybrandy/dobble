@@ -1,0 +1,36 @@
+name: Generate Dobble PDF
+
+on:
+  workflow_dispatch:  # This allows manual trigger from the website
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y g++ make texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra nodejs npm
+
+      - name: Compile C++ Code
+        run: g++ -o dobble_generator bisik.cpp cards.cpp projektiv.cpp write.cpp -std=c++17
+
+      - name: Run C++ Program and Generate PDF
+        run: |
+          echo "1" > config.txt  # Example input (modify as needed)
+          echo "11" >> config.txt
+          echo "0" >> config.txt
+          echo "0" >> config.txt
+          ./dobble_generator < config.txt
+          pdflatex main.tex
+          mv main.pdf dobble_cards.pdf
+
+      - name: Upload PDF Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dobble_cards
+          path: dobble_cards.pdf
