@@ -15,7 +15,7 @@
 
     <script>
         async function generatePDF() {
-            const githubRepo = "your-username/your-repo";  // Update with your repo
+            const githubRepo = "nagybrandy/dobble";  // Update with your repo
             const workflow = "generate_pdf.yml";
 
             const response = await fetch(`https://api.github.com/repos/${githubRepo}/actions/workflows/${workflow}/dispatches`, {
