@@ -5,14 +5,26 @@ on:
 
 jobs:
   generate:
-    runs-on: ubuntu-latest  # ✅ Use default Ubuntu runner
-
+    runs-on: ubuntu-latest  # Uses Ubuntu with pre-installed g++
+    
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Install Dependencies
-        run: sudo apt update && sudo apt install -y g++ make texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
+      - name: Cache LaTeX and System Dependencies
+        uses: actions/cache@v3
+        id: cache-apt
+        with:
+          path: /var/cache/apt/archives
+          key: texlive-latex-ubuntu-${{ runner.os }}-${{ hashFiles('.github/workflows/generate_pdf.yml') }}
+          restore-keys: |
+            texlive-latex-ubuntu-${{ runner.os }}-
+
+      - name: Install Dependencies (Only If Needed)
+        if: steps.cache-apt.outputs.cache-hit != 'true'
+        run: |
+          sudo apt update
+          sudo apt install -y g++ make texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
 
       - name: Compile C++ Code
         run: g++ -o dobble_generator bisik.cpp cards.cpp projektiv.cpp write.cpp -std=c++17
