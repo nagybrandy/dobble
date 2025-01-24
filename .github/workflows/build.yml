@@ -16,8 +16,14 @@ jobs:
       - name: Extract TeX Live Installer
         run: Expand-Archive -Path install-tl.zip -DestinationPath C:\install-tl
 
+      - name: List extracted files (for debugging)
+        run: Get-ChildItem -Path C:\install-tl -Recurse
+
       - name: Install TeX Live (Silent Mode)
-        run: C:\install-tl\install-tl-windows.bat -no-gui -profile=install.profile
+        run: |
+          cd C:\install-tl
+          dir
+          ./install-tl-windows.bat -no-gui -profile=install.profile
         shell: cmd
 
       - name: Add TeX Live to PATH
