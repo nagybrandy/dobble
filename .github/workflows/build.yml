@@ -1,0 +1,19 @@
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Extract TeX Live Installer
+        run: Expand-Archive -Path install-tl.zip -DestinationPath C:\install-tl
+
+      - name: Install TeX Live (Silent Mode)
+        run: C:\install-tl\install-tl-windows.bat -no-gui -profile=install.profile
+        shell: cmd
+
+      - name: Add TeX Live to PATH
+        run: echo "C:\texlive\2023\bin\windows" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8
+
+      - name: Verify TeX Live Installation
+        run: pdflatex --version
