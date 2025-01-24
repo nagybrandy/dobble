@@ -21,10 +21,11 @@ jobs:
 
       - name: Install TeX Live (Silent Mode)
         run: |
-          cd install-tl
+          cd install-tl\install-tl-*
           dir
           ./install-tl-windows.bat -no-gui -profile=install.profile
         shell: cmd
+      
 
       - name: Add TeX Live to PATH
         run: echo "C:\texlive\2023\bin\windows" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8
