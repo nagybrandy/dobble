@@ -1,4 +1,4 @@
-name: Build Dobble Generator
+name: Deploy Backend and Frontend
 
 on:
   push:
@@ -25,5 +25,16 @@ jobs:
       - name: Install Node.js Dependencies
         run: npm install express multer
 
-      - name: Run Backend
-        run: node server.js
+      - name: Deploy Backend to Railway
+        uses: railwayapp/cli-action@v2
+        with:
+          command: up
+          service: backend
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Deploy Frontend to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
