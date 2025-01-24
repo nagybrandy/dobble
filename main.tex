@@ -1,0 +1,198 @@
+\documentclass{article}
+\usepackage{tikz}
+\usepackage{forloop}
+\usepackage{ifthen}
+\usepackage{intcalc}
+\usepackage[a4paper, margin=1cm]{geometry}
+\usetikzlibrary {positioning}
+\usetikzlibrary{calc}
+\usepackage{xstring}
+\usepackage{pgf} % For random number generation
+
+\newcommand{\randomrotatedimage}[3]{
+	% #1: Minimum width
+	% #2: Maximum width
+	% #3: Filename of the image
+	% Generate a random angle between 0 and 360
+	\pgfmathtruncatemacro{\randangle}{random(0,360)}
+	% Generate a random width between #1 and #2
+	\pgfmathsetmacro{\randwidth}{#1 + random() * (#2 - #1)}
+	% Include the image with random angle and random width
+	\includegraphics[width=\randwidth cm, height=\randwidth cm, angle=\randangle]{#3}
+}
+
+\newcommand{\randomrotatedtextbox}[3]{
+	% #1: Height
+	% #2: Maximum width
+	% #3: x
+	% #4: y
+	% #5: Text content
+	% Generate a random angle between 0 and 360
+	\pgfmathtruncatemacro{\randangle}{random(0,360)}
+	\node at (0,2) [draw, rectangle, rotate=\randangle, width=3cm, height=1 cm] {\textbf{#3}};
+}
+
+\begin{document}
+	
+	\include{variables}
+	
+	\ExplSyntaxOn
+	\NewExpandableDocumentCommand{\GetListMember}{smm}
+	{
+		\IfBooleanTF{#1}
+		{% * means control sequence
+			\clist_item:Nn #2 { #3 }
+		}
+		{
+			\clist_item:nn { #2 } { #3 }
+		}
+	}
+	\ExplSyntaxOff
+	\newcounter{curPic}
+	
+	
+	%meg kell bele a picType elagazas
+	\foreach \i in {1,...,\numberOfCards}{
+		\begin{tikzpicture}
+			\draw circle (4.5cm);
+			\begin{scope}[node distance=15mm and 15mm]
+				\ifnum\picType=1{
+					\stepcounter{curPic}
+					\ifnum\numberOfPics=2
+					\node at (-2,0) {
+						%\includegraphics[width=2.5cm, angle=\randomangle] {\GetListMember*{\pics}{\value{curPic}}} 
+						\randomrotatedimage{3}{3}{\GetListMember*{\pics}{\value{curPic}}}
+					};
+					\stepcounter{curPic}
+					\node at (2,0) {
+						\randomrotatedimage{3}{3}{\GetListMember*{\pics}{\value{curPic}}}
+						%\randomrotatedimage[width=3cm]{\GetListMember*{\pics}{\value{curPic}}}
+					};
+					\fi
+					\ifnum\numberOfPics=3
+					\node at (-2,-1) {
+						\randomrotatedimage{2.5}{3}{\GetListMember*{\pics}{\value{curPic}}}
+					};
+					\stepcounter{curPic}
+					\node at (2,-1) {
+						\randomrotatedimage{2.5}{3}{\GetListMember*{\pics}{\value{curPic}}}
+					};
+					\stepcounter{curPic}
+					\node at (0,2) {
+						\randomrotatedimage{2.5}{3}{\GetListMember*{\pics}{\value{curPic}}}
+					};
+					\fi
+					\ifnum\numberOfPics=4
+					\node at (-1.5,-1.8) {
+						\randomrotatedimage{2.5}{2.7}{\GetListMember*{\pics}{\value{curPic}}}
+					};
+					\stepcounter{curPic}
+					\node at (2.2,-1) {
+						\randomrotatedimage{2.5}{2.7}{\GetListMember*{\pics}{\value{curPic}}}
+					};
+					\stepcounter{curPic}
+					\node at (-2,1.8) {
+						\randomrotatedimage{2.5}{2.7}{\GetListMember*{\pics}{\value{curPic}}}
+					};
+					\stepcounter{curPic}
+					\node at (1.5,2) {
+						\randomrotatedimage{2.5}{2.7}{\GetListMember*{\pics}{\value{curPic}}}
+					};
+					\fi
+				}\else{
+					\node at (0,2) [rotate=60, minimum size=2cm] {egyenlet};
+				}\fi
+			\end{scope}
+		\end{tikzpicture}
+		\ifnum\intcalcMod{\i}{2}=0
+			\\
+		\fi
+		\ifnum\intcalcMod{\i}{6}=0
+			\newpage
+		\fi
+	}
+	
+%	%ez eddig mukodott
+%		
+%		\newcounter{curpicnum}
+%		\newcounter{curcarnum}
+%		
+%		\foreach \pic in \pics {
+%			\expandafter\ifnum\intcalcMod{\value{curpicnum}}{\numberOfPics}=0
+%				\begin{tikzpicture}[overlay, remember picture]
+%					\ifthenelse{\isodd{\value{curcarnum}}}{\renewcommand{\x}{5.5}}{\renewcommand{\x}{15}}
+%					\ifthenelse{\intcalcMod{\value{curcarnum}}{6} < 4}{
+%						\ifthenelse{\intcalcMod{\value{curcarnum}}{6} < 2}
+%						{\renewcommand{\y}{-5.5}}{\renewcommand{\y}{-14.8}}}
+%					{\renewcommand{\y}{-24.1}}
+%					
+%					\draw ([xshift=\x cm, yshift=\y cm]current page.north west) circle (4.5cm);
+%				\end{tikzpicture}
+%				\setcounter{curpicnum}{0}
+%				\stepcounter{curcarnum}
+%			\fi
+%			
+%			\stepcounter{curpicnum}
+%			\expandafter\ifnum\intcalcMod{\value{curcarnum}}{6}=0
+%				\newpage
+%				\setcounter{curcarnum}{0}
+%			\fi
+%		}
+		
+	
+
+	
+\end{document}
+	
+	
+	%		\foreach \i in {1,...,\numberOfCards}{
+		%			\ifthenelse{\isodd{\i}}{\renewcommand{\x}{5.5}}{\renewcommand{\x}{15}}
+		%			\ifthenelse{\intcalcMod{\i}{6} < 4}{
+			%				\ifthenelse{\intcalcMod{\i}{6} < 2}
+			%				{\renewcommand{\y}{-5.5}}{\renewcommand{\y}{-14.8}}}
+		%			{\renewcommand{\y}{-24.1}}
+		%			
+		%			\draw (\x cm, \y cm) circle (4.5cm);
+		%			
+		%			\ifnum\numberOfPages>\page
+		%				\ifnum\intcalcMod{\i}{6}=0
+		%					\newpage
+		%					\advance\page by 1
+		%				\fi
+		%			\fi
+	
+	
+%	\include{variables}
+%	\newcommand{\x}{5.5}
+%	\newcommand{\y}{-5.5}
+%	\forloop{i}{1}{\value{i} < \intcalcInc{\numberOfCards}}{
+%		\ifthenelse{\isodd{\value{i}}}{\renewcommand{\x}{5.5}}{\renewcommand{\x}{15} }
+%		\ifthenelse{\intcalcMod{\value{i}}{6} < 4}{
+%			\ifthenelse{\intcalcMod{\value{i}}{6} < 2}{\renewcommand{\y}{-5.5}}{\renewcommand{\y}{-14.8}}
+%		}{\renewcommand{\y}{-24.1}}
+%		\begin{tikzpicture}[overlay, remember picture]
+%			\node[draw,circle, xshift=\x cm, yshift=\y cm, inner sep=1cm] {
+%				\includegraphics[width=2cm, angle=45,]{\cards{#1}}
+%				\includegraphics[width=2cm, angle=120]{\cards{2}}
+%				\includegraphics[width=2cm, angle=10]{\cards{3}}
+%				\includegraphics[width=2cm, angle=240]{\cards{4}}
+%			};
+%%			\draw ([xshift=\x cm, yshift=\y cm]current page.north west) circle (4.5cm);
+%%			\node[anchor=north west, outer xsep=1cm, outer ysep=1cm] at (current page.north west)  {
+%%				 \includegraphics[width=2cm, angle=45]{bastya.png}
+%%			};
+%%			\node[anchor=north west, xshift=2cm, yshift=-3cm, outer xsep=1cm, outer ysep=1cm] at (current page.north west)  {
+%%				\includegraphics[width=2cm, angle=45]{kiralyno.png}
+%%			};
+%%			\node[anchor=north west, xshift=5cm, yshift=-3cm, outer xsep=1cm, outer ysep=1cm] at (current page.north west)  {
+%%				\includegraphics[width=2cm, angle=45]{kiraly.png}
+%%			};
+%%			\node[anchor=north west, xshift=5cm, yshift=-5.5cm, outer xsep=1cm, outer ysep=1cm] at (current page.north west)  {
+%%				\includegraphics[width=2cm, angle=45]{gyalog.png}
+%%			};
+%		\end{tikzpicture}
+%		\expandafter\ifnum\intcalcMod{\value{i}}{6}=0
+%			\newpage
+%		\fi
+%	}
+		
