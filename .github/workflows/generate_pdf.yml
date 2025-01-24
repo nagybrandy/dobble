@@ -23,8 +23,7 @@ jobs:
 
       - name: Install Dependencies (Only If Needed)
         run: |
-          sudo apt update && sudo apt install -y g++ make texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra nodejs npm
-          npm install
+          sudo apt update && sudo apt install -y g++ make texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
 
       - name: Compile C++ Code
         run: g++ -o dobble_generator bisik.cpp cards.cpp projektiv.cpp write.cpp -std=c++17
