@@ -1,4 +1,4 @@
-name: Compile and Generate PDF
+name: Compile and Generate Dobble PDF
 
 on:
   push:
@@ -15,19 +15,25 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install Dependencies
-        run: sudo apt update && sudo apt install -y g++ make texlive-latex-base texlive-latex-extra
+        run: |
+          sudo apt update
+          sudo apt install -y g++ make texlive-latex-base texlive-latex-extra texlive-fonts-recommended texlive-fonts-extra
 
       - name: Compile C++ Code
-        run: g++ -o dobble_generator dobble_generator.cpp
+        run: g++ -o dobble_generator bisik.cpp cards.cpp projektiv.cpp write.cpp -std=c++17
 
       - name: Run C++ Program
-        run: ./dobble_generator  # This should generate 'output.tex'
+        run: ./dobble_generator  # Generates 'variables.tex' for LaTeX
 
-      - name: Convert LaTeX to PDF
-        run: pdflatex output.tex
+      - name: Compile LaTeX to PDF
+        run: |
+          pdflatex main.tex
+          pdflatex main.tex  # Run twice for references
 
       - name: Move PDF to Public Folder
-        run: mkdir public && mv output.pdf public/
+        run: |
+          mkdir public
+          mv main.pdf public/dobble_cards.pdf
 
       - name: Deploy PDF to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
