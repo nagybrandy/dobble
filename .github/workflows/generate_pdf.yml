@@ -34,3 +34,10 @@ jobs:
         with:
           name: dobble_cards
           path: dobble_cards.pdf
+
+      - name: Trigger Workflow
+        run: |
+          curl -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_PAT }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/nagybrandy/dobble/actions/workflows/generate_pdf.yml/dispatches \
+          -d '{"ref":"main"}'
