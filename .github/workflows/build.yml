@@ -14,14 +14,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Extract TeX Live Installer
-        run: Expand-Archive -Path install-tl.zip -DestinationPath C:\install-tl
+        run: Expand-Archive -Path install-tl.zip -DestinationPath install-tl
 
-      - name: List extracted files (for debugging)
-        run: Get-ChildItem -Path C:\install-tl -Recurse
+      - name: List extracted files (debugging)
+        run: Get-ChildItem -Path install-tl -Recurse
 
       - name: Install TeX Live (Silent Mode)
         run: |
-          cd C:\install-tl
+          cd install-tl
           dir
           ./install-tl-windows.bat -no-gui -profile=install.profile
         shell: cmd
